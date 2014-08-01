@@ -1,6 +1,5 @@
 Pyrox
 =========
----
 Pyrox is a game with roguelike system
 
   - Feature 1
