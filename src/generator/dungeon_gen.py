@@ -28,7 +28,7 @@ class Room:
     def make_room(self):
         self.room = [[TILE_SOLID for col in range(self.width)] for row in range(self.height)]
         _fill_with(self.room, self.x, self.y, self.width, self.height, TILE_WALL)
-        _fill_with(self.room, self.x + 1, self.y + 1, self.width - 2, self.height - 2, TILE_EMPTY)
+        _fill_with(self.room, self.x + 1, self.y + 1, self.width - 2, self.height - 2, TILE_FLOOR)
 
     def place_tile(self, x, y, tile):
         self.room[y][x] = tile
@@ -138,7 +138,7 @@ class Dungeon:
         self.compile()
 
     def make_dungeon(self):
-        self.dungeon = [[TILE_SOLID for col in range(self.width)] for row in range(self.height)]
+        self.dungeon = [[TILE_EMPTY for col in range(self.width)] for row in range(self.height)]
 
     def make_first_room(self, x, y, width, height):
         self.rooms.append(Room(x, y, width, height))
@@ -195,10 +195,11 @@ class Dungeon:
 
             for x in range(from_x, to_x + 1):
                 for y in range(from_y, to_y + 1):
-                    self.dungeon[y][x] = TILE_EMPTY
+                    self.dungeon[y][x] = TILE_FLOOR
+
             for x in range(from_x, to_x - 1, -1):
                 for y in range(from_y, to_y - 1, -1):
-                    self.dungeon[y][x] = TILE_EMPTY
+                    self.dungeon[y][x] = TILE_FLOOR
 
             self.dungeon[from_y][from_x] = TILE_DOOR
             self.dungeon[to_y][to_x] = TILE_DOOR
