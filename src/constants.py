@@ -16,7 +16,7 @@ TILE_ANCHOR = (0, TILE_SIZE)
 
 # Window consts
 WINDOW_WIDTH = 480
-WINDOW_HEIGHT = 240
+WINDOW_HEIGHT = 320
 
 # Generator consts
 ROOM_MIN_WIDTH = 5
