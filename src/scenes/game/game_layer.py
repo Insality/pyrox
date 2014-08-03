@@ -13,19 +13,17 @@ class GameLayer(cocos.layer.ScrollableLayer):
 
     def __init__(self):
         super(GameLayer, self).__init__()
-        # self.player = entities.player.Player()
-        # self.add(self.player)
         self.collman = cm.CollisionManagerGrid(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT, TILE_SIZE, TILE_SIZE)
         self.schedule(self.update)
         self.schedule_interval(self.update_second, 1)
-        self.scale = 1
-        self.cam = Camera(0, 300)
+        self.cam = Camera(100, 300)
         self.add(self.cam)
 
         self.level = level_manager.generate_level(15)
         self.add(self.level)
 
-        self.player = Player(212, 412)
+        pos = self.level.get(210, 530).center
+        self.player = Player(pos[0], pos[1])
         self.level.add(self.player, z=self.player.y-180)
 
     def on_key_press(self, k, modifiers):

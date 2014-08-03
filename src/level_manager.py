@@ -34,8 +34,8 @@ class LevelManager:
 
         for y in reversed(range(height)):
             for x in range(width):
-                if ascii_lvl[y][x] == TILE_SOLID:
-                    type = wall_dungeon
+                if ascii_lvl[y][x] == TILE_SOLID or ascii_lvl[y][x] ==TILE_EMPTY:
+                    type = world_stone
                 elif ascii_lvl[y][x] == TILE_FLOOR or ascii_lvl[y][x] == TILE_DOOR:
                     chance = randint(0, 1000)
                     if chance <= 5:
@@ -43,16 +43,15 @@ class LevelManager:
                     else:
                         type = floor_dungeon
                 elif ascii_lvl[y][x] == TILE_WALL:
-                    type = world_stone
+                    type = wall_dungeon
                 else:
                     type = None
 
                 if not type==None:
-                    position=(30+x*TILE_SIZE, 30+TILE_ANCHOR[1] + y*TILE_SIZE)
+                    position=(x*TILE_SIZE, TILE_ANCHOR[1] + y*TILE_SIZE)
                     tile = Tile(type, position[0], position[1])
                     dungeon[y][x] = tile
 
-        print dungeon
         return level.Level(dungeon)
 
 

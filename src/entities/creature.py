@@ -2,6 +2,7 @@
 __author__ = 'Insality'
 
 import entity
+from src.constants import *
 
 class Creature(entity.Entity):
     def __init__(self, img):

@@ -5,6 +5,9 @@ import cocos
 from constants import *
 
 class Level(cocos.layer.Layer):
+
+    is_event_handler = True
+
     def __init__(self, dungeon):
         super(Level, self).__init__()
         self.dungeon = dungeon
@@ -14,7 +17,7 @@ class Level(cocos.layer.Layer):
         for y in reversed(range(self.height)):
             for x in range(self.width):
                 if (self.dungeon[y][x] != None):
-                    self.add(self.dungeon[y][x], z=WINDOW_HEIGHT-y)
+                    self.add(self.dungeon[y][x])
 
         self.schedule(self.update_z)
 
@@ -23,9 +26,16 @@ class Level(cocos.layer.Layer):
         path = []
         return path
 
-    def get(self, x, y):
-        return self.dungeon[y][x]
 
+    def on_mouse_press (self, x, y, buttons, modifiers):
+        posx, posy = cocos.director.director.get_virtual_coordinates (x, y)
+        posx -= self.parent.x
+        posy -= self.parent.y
+        self.get(int(posx),int(posy))
+
+    def get(self, x, y):
+        self.dungeon[y//TILE_SIZE][x//TILE_SIZE].color = (100, 100, 100)
+        return self.dungeon[y//TILE_SIZE][x//TILE_SIZE]
 
     def update_z(self, dt):
         '''

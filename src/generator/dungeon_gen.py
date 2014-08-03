@@ -17,6 +17,7 @@ class Room:
     def __init__(self, pos_x, pos_y, width, height):
         self.x = 0
         self.y = 0
+        # pos in general map
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.width = width
@@ -61,7 +62,7 @@ class Room:
 class Dungeon:
     def __init__(self, room_count):
 
-        random.seed(10)
+        random.seed(18)
         self.room_count = room_count
         self.width = 0
         self.height = 0
