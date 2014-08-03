@@ -2,8 +2,10 @@
 __author__ = 'Insality'
 
 import cocos
-from src.input_layer import Input
+
+from src.scenes.input_layer import Input
 from game_layer import GameLayer
+
 
 class Game(cocos.scene.Scene):
     def __init__(self):

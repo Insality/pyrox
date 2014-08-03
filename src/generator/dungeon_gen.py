@@ -265,7 +265,7 @@ def generate(room_count):
     dungeon = Dungeon(room_count)
 
     dungeon.generate()
-    return dungeon.dungeon, dungeon.width, dungeon.height
+    return dungeon.dungeon
 
 if __name__ == "__main__":
     test_generator(7)
