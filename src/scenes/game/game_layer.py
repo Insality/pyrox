@@ -6,6 +6,7 @@ from src.constants import *
 from pyglet.window import key
 import src.level_manager as level_manager
 from src.entities.player import Player
+from src.scenes.game.camera import Camera
 
 class GameLayer(cocos.layer.ScrollableLayer):
     is_event_handler = True
@@ -18,28 +19,29 @@ class GameLayer(cocos.layer.ScrollableLayer):
         self.schedule(self.update)
         self.schedule_interval(self.update_second, 1)
         self.scale = 1
-        self.camera_x = 0
-        self.camera_y = 300
+        self.cam = Camera(0, 300)
+        self.add(self.cam)
 
         self.level = level_manager.generate_level(15)
         self.add(self.level)
 
-        self.player = Player(212, 409)
+        self.player = Player(212, 412)
         self.level.add(self.player, z=self.player.y-180)
 
     def on_key_press(self, k, modifiers):
         move = TILE_SIZE
-        if (k==key.UP):
-            self.camera_y += move
-        if (k==key.RIGHT):
-            self.camera_x += move
-        if (k==key.DOWN):
-            self.camera_y -= move
-        if (k==key.LEFT):
-            self.camera_x -= move
-
-        self.x = -self.camera_x
-        self.y = -self.camera_y
+        if (k==key.W):
+            self.cam.move_by(0, move)
+        if (k==key.D):
+            self.cam.move_by(move, 0)
+        if (k==key.S):
+            self.cam.move_by(0, -move)
+        if (k==key.A):
+            self.cam.move_by(-move, 0)
+        if (k==key.SPACE):
+            self.cam.follow_to(self.player)
+        if (k==key.C):
+            self.cam.unfollow()
 
         self.player.pressed(k)
 
@@ -49,7 +51,7 @@ class GameLayer(cocos.layer.ScrollableLayer):
         # TODO: Вынести в level.update
         for ch in self.level.get_children():
             ch.visible = False
-            if ch.x >= self.camera_x-+TILE_SIZE and ch.x <= self.camera_x+WINDOW_WIDTH+TILE_SIZE and ch.y >= self.camera_y-TILE_SIZE and ch.y<= self.camera_y+WINDOW_HEIGHT+TILE_SIZE:
+            if self.cam.is_obj_in(ch):
                 ch.visible = True
         # for actor in self.get_children():
         #     self.collman.add(actor)

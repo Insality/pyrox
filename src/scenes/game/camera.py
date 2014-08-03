@@ -9,13 +9,49 @@ class Camera(cocos.layer.Layer):
     is_event_handler = True
 
     def __init__(self, x, y):
+        super(Camera, self).__init__()
         self.x = x
         self.y = y
         self.width = WINDOW_WIDTH
         self.height = WINDOW_HEIGHT
+        self.follow_obj = None
 
-    #   self.schedule(self.update)
+        self.schedule(self.update)
+
+    def move_by(self, x, y):
+        self.x += x
+        self.y += y
+
+    def look_at(self, obj):
+        self.move_to(obj.x, obj.y)
+
+    def move_to(self, x, y):
+        self.x = x - WINDOW_WIDTH//2
+        self.y = y - WINDOW_HEIGHT//2
+
+    def is_obj_in(self, obj):
+        if obj.x >= self.x-+TILE_SIZE and obj.x <= self.x+WINDOW_WIDTH+TILE_SIZE and obj.y >= self.y-TILE_SIZE and obj.y<= self.y+WINDOW_HEIGHT+TILE_SIZE:
+            return True
+        return False
+
+    def follow_to(self, obj):
+        self.follow_obj = obj
+
+    def unfollow(self):
+        self.follow_obj = None
 
     def update(self, dt):
-        pass
+        self.update_parent_offset()
+        self.update_following()
+
+    def on_key_press(self, k, mods):
+        self.update_following()
+
+    def update_following(self):
+        if (self.follow_obj != None):
+            self.look_at(self.follow_obj)
+
+    def update_parent_offset(self):
+        self.parent.x = -self.x
+        self.parent.y = -self.y
 

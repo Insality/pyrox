@@ -13,7 +13,7 @@ pyglet.resource.path += ["res/sound/"]
 pyglet.resource.reindex()
 
 
-# window_icon = pyglet.image.load('res/icon/icon.png')
+window_icon = pyglet.image.load('res/icon/icon.png')
 
 # Player:
 player = pyglet.image.ImageGrid( pyglet.resource.image('player.png'), 1, 2)
@@ -25,6 +25,7 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 # Map tiles:
 floors_dungeon =  pyglet.image.ImageGrid( pyglet.resource.image('floors_dungeon.png'), 2, 2)
 floor_dungeon = floors_dungeon[0]
+floor_dungeon_crack = floors_dungeon[1]
 wall_dungeon = pyglet.resource.image('wall_dungeon.png')
 world_stone = pyglet.resource.image('world_stone.png')
 

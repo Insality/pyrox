@@ -5,6 +5,7 @@ import level
 from constants import *
 from resource import *
 from entities.map.tile import Tile
+from random import randint
 
 class LevelManager:
     def __init__(self):
@@ -36,7 +37,11 @@ class LevelManager:
                 if ascii_lvl[y][x] == TILE_SOLID:
                     type = wall_dungeon
                 elif ascii_lvl[y][x] == TILE_FLOOR or ascii_lvl[y][x] == TILE_DOOR:
-                    type = floor_dungeon
+                    chance = randint(0, 1000)
+                    if chance <= 5:
+                        type = floor_dungeon_crack
+                    else:
+                        type = floor_dungeon
                 elif ascii_lvl[y][x] == TILE_WALL:
                     type = world_stone
                 else:
