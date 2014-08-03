@@ -1,8 +1,10 @@
+# coding: utf-8
 __author__ = 'Insality'
 
 from src.constants import *
 import math
 from random import randint, choice
+import random
 
 
 class Hall:
@@ -58,6 +60,8 @@ class Room:
 
 class Dungeon:
     def __init__(self, room_count):
+
+        random.seed(10)
         self.room_count = room_count
         self.width = 0
         self.height = 0
@@ -89,6 +93,7 @@ class Dungeon:
 
         rooms = filter(lambda x: len(x.free_direction) > 0 and len(set(x.free_direction) & prefer_direction) > 0,
                        self.rooms)
+        # TODO: ставить комнату в непредпочтитетльную сторону при остутствии предпочтительных?
 
         room_from = choice(rooms)
         dirs = set(room_from.free_direction) & prefer_direction
@@ -101,6 +106,9 @@ class Dungeon:
             door_new = get_new_pos_by_direction(door_from[0], door_from[1], hall_len, direction)
 
             room_width = randint(ROOM_MIN_WIDTH, ROOM_MAX_WIDTH)
+            # if (room_width == 3):
+            #     room_height = 3
+            # else:
             room_height = randint(ROOM_MIN_HEIGHT, ROOM_MAX_HEIGHT)
             room_x = door_new[0]
             room_y = door_new[1]
@@ -151,12 +159,41 @@ class Dungeon:
                     return False
         return True
 
-    def place_room(self, room, offset_x, offset_y):
-        offset_x += room.pos_x
-        offset_y += room.pos_y
+    def place_room(self, room):
+        offset_x = self.room_offset_x + room.pos_x
+        offset_y = self.room_offset_y +room.pos_y
         for i in range(room.height):
             for j in range(room.width):
                 self.dungeon[i + offset_y][j + offset_x] = room.room[i][j]
+
+    def place_hall(self, hall):
+        from_x = hall.x_from + self.room_offset_x
+        from_y = hall.y_from + self.room_offset_y
+        to_y = hall.y_to + self.room_offset_y
+        to_x = hall.x_to + self.room_offset_x
+
+        from_pos = (from_x, from_y)
+        to_pos = (to_x, to_y)
+
+        if (from_pos > to_pos):
+            from_pos, to_pos = to_pos, from_pos
+
+        # placing wall with width = 3 between points
+        for x in range(from_pos[0], to_pos[0] + 1):
+            for y in range(from_pos[1], to_pos[1] + 1):
+                if (x > from_pos[0] and x < to_pos[0] or y > from_pos[1] and y < to_pos[1]):
+                    self.dungeon[y-1][x] = TILE_WALL
+                    self.dungeon[y+1][x] = TILE_WALL
+                    self.dungeon[y][x-1] = TILE_WALL
+                    self.dungeon[y][x+1] = TILE_WALL
+
+        # placing floor between two points
+        for x in range(from_pos[0], to_pos[0] + 1):
+            for y in range(from_pos[1], to_pos[1] + 1):
+                self.dungeon[y][x] = TILE_FLOOR
+
+        self.dungeon[from_y][from_x] = TILE_DOOR
+        self.dungeon[to_y][to_x] = TILE_DOOR
 
     def compile(self):
         assert len(self.rooms) > 0
@@ -184,25 +221,12 @@ class Dungeon:
 
         self.make_dungeon()
 
+
         for room in self.rooms:
-            self.place_room(room, self.room_offset_x, self.room_offset_y)
+            self.place_room(room)
 
         for hall in self.halls:
-            from_x = hall.x_from + self.room_offset_x
-            from_y = hall.y_from + self.room_offset_y
-            to_y = hall.y_to + self.room_offset_y
-            to_x = hall.x_to + self.room_offset_x
-
-            for x in range(from_x, to_x + 1):
-                for y in range(from_y, to_y + 1):
-                    self.dungeon[y][x] = TILE_FLOOR
-
-            for x in range(from_x, to_x - 1, -1):
-                for y in range(from_y, to_y - 1, -1):
-                    self.dungeon[y][x] = TILE_FLOOR
-
-            self.dungeon[from_y][from_x] = TILE_DOOR
-            self.dungeon[to_y][to_x] = TILE_DOOR
+            self.place_hall(hall)
 
     def draw(self):
         for row in self.dungeon:

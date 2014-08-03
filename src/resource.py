@@ -19,6 +19,9 @@ floor_dungeon = floors_dungeon[0]
 wall_dungeon = pyglet.resource.image('wall_dungeon.png')
 world_stone = pyglet.resource.image('world_stone.png')
 
+# Fonts:
+kongtext_font = pyglet.resource.add_font("kongtext.ttf")
+
 # Animations:
 # dungeon = pyglet.resource.image('chess_board.png')
 # dungeons = pyglet.image.ImageGrid(dungeon, 2, 2)
