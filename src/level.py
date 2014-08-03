@@ -2,6 +2,7 @@
 __author__ = 'Insality'
 
 import cocos
+from constants import *
 
 class Level(cocos.layer.Layer):
     def __init__(self, dungeon):
@@ -13,7 +14,9 @@ class Level(cocos.layer.Layer):
         for y in reversed(range(self.height)):
             for x in range(self.width):
                 if (self.dungeon[y][x] != None):
-                    self.add(self.dungeon[y][x])
+                    self.add(self.dungeon[y][x], z=WINDOW_HEIGHT-y)
+
+        self.schedule(self.update_z)
 
 
     def get_path(self, a, b):
@@ -22,3 +25,25 @@ class Level(cocos.layer.Layer):
 
     def get(self, x, y):
         return self.dungeon[y][x]
+
+
+    def update_z(self, dt):
+        '''
+        Sort all children objects by Y coord to correct render
+        TODO: grab objects placed in camera zone only
+        '''
+        is_changed = False
+        for i in range(len(self.children)):
+            ch = self.children[i]
+            # ty - pos y in render_list (from up to down)
+            ty = ch[0]
+            # ch[1].y - cur y in real obj (from down to up). That's why WHeight - ch[1].y
+            ty_obj = WINDOW_HEIGHT - ch[1].y
+            if (ty != ty_obj):
+                tmp = list(ch)
+                tmp[0] = ty_obj
+                self.children[i] = tuple(tmp)
+                is_changed = True
+
+        if is_changed:
+            self.children.sort()

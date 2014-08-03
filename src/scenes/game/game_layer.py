@@ -5,13 +5,13 @@ import cocos.collision_model as cm
 from src.constants import *
 from pyglet.window import key
 import src.level_manager as level_manager
+from src.entities.player import Player
 
 class GameLayer(cocos.layer.ScrollableLayer):
     is_event_handler = True
 
     def __init__(self):
         super(GameLayer, self).__init__()
-
         # self.player = entities.player.Player()
         # self.add(self.player)
         self.collman = cm.CollisionManagerGrid(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT, TILE_SIZE, TILE_SIZE)
@@ -21,11 +21,14 @@ class GameLayer(cocos.layer.ScrollableLayer):
         self.camera_x = 0
         self.camera_y = 300
 
-        self.level = level_manager.generate_level(4)
+        self.level = level_manager.generate_level(15)
         self.add(self.level)
 
+        self.player = Player(212, 409)
+        self.level.add(self.player, z=self.player.y-180)
+
     def on_key_press(self, k, modifiers):
-        move = TILE_SIZE*2
+        move = TILE_SIZE
         if (k==key.UP):
             self.camera_y += move
         if (k==key.RIGHT):
@@ -37,6 +40,8 @@ class GameLayer(cocos.layer.ScrollableLayer):
 
         self.x = -self.camera_x
         self.y = -self.camera_y
+
+        self.player.pressed(k)
 
     def update(self, dt):
         self.collman.clear()
