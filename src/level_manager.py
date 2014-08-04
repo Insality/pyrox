@@ -2,10 +2,8 @@ __author__ = 'Insality'
 
 import generator.dungeon_gen
 import level
-from constants import *
-from resource import *
-from entities.map.tile import Tile
-from random import randint
+from entities.map.tiles import *
+
 
 class LevelManager:
     def __init__(self):
@@ -32,31 +30,36 @@ class LevelManager:
         print ("Translate ascii to obj. %i:%i" % (width, height))
         dungeon = [[None for col in range(width)] for row in range(height)]
 
-        for y in reversed(range(height)):
-            for x in range(width):
-                if ascii_lvl[y][x] == TILE_SOLID or ascii_lvl[y][x] ==TILE_EMPTY:
-                    type = world_stone
-                elif ascii_lvl[y][x] == TILE_FLOOR or ascii_lvl[y][x] == TILE_DOOR:
-                    chance = randint(0, 1000)
-                    if chance <= 5:
-                        type = floor_dungeon_crack
-                    else:
-                        type = floor_dungeon
-                elif ascii_lvl[y][x] == TILE_WALL:
-                    type = wall_dungeon
-                else:
-                    type = None
+        # reverse by y to new coord. system:
+        ascii_lvl.reverse()
 
-                if not type==None:
-                    position=(x*TILE_SIZE, TILE_ANCHOR[1] + y*TILE_SIZE)
-                    tile = Tile(type, position[0], position[1])
+        start_tile = (0, 0)
+        for y in range(height):
+            for x in range(width):
+                position = (x * TILE_SIZE, TILE_ANCHOR[1] + y * TILE_SIZE)
+
+                if ascii_lvl[y][x] == TILE_SOLID or ascii_lvl[y][x] == TILE_EMPTY:
+                    tile = TileWorldWall(position, world_stone)
+                elif ascii_lvl[y][x] == TILE_FLOOR or ascii_lvl[y][x] == TILE_DOOR:
+                    tile = TileFloor(position, floor_dungeon)
+                elif ascii_lvl[y][x] == TILE_WALL:
+                    tile = TileWall(position, wall_dungeon)
+                elif ascii_lvl[y][x] == TILE_EXIT:
+                    tile = TileFloor(position, map_exit)
+                elif ascii_lvl[y][x] == TILE_ENTER:
+                    tile = TileFloor(position, floor_dungeon_crack)
+                    start_tile = (x, y)
+                else:
+                    tile = None
+
+                if tile:
                     dungeon[y][x] = tile
 
-        return level.Level(dungeon)
+        return level.Level(dungeon, start_tile)
 
 
 _inst = LevelManager()
 generate_level = _inst.generate_level
 load_level = _inst.load_level
-save_leve = _inst.save_level
+save_level = _inst.save_level
 get_level = _inst.get_level

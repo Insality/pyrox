@@ -6,11 +6,11 @@ from src.resource import *
 from cocos.director import director
 from src.scenes.game.game_scene import Game
 from pyglet.gl import *
+import cProfile
 
 
 def init_gl():
     glEnable(GL_TEXTURE_2D)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
 def main():
@@ -24,3 +24,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    # cProfile.run('main()', 'restat2')

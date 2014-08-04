@@ -13,30 +13,32 @@ pyglet.resource.path += ["res/sound/"]
 pyglet.resource.reindex()
 
 
+def load_resource(string):
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    return pyglet.resource.image(string)
+
+
 window_icon = pyglet.image.load('res/icon/icon.png')
 
 # Player:
-player = pyglet.image.ImageGrid( pyglet.resource.image('player.png'), 1, 2)
-player_stay_seq = player[0:2]
-player_stay = pyglet.image.Animation.from_image_sequence(player_stay_seq, 0.3, loop=True)
-
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+_player = pyglet.image.ImageGrid(load_resource('player.png'), 1, 2)
+_player_stay_seq = _player[0:2]
+player_stay = pyglet.image.Animation.from_image_sequence(_player_stay_seq, 0.3, loop=True)
 
 # Map tiles:
-floors_dungeon =  pyglet.image.ImageGrid( pyglet.resource.image('floors_dungeon.png'), 2, 2)
-floor_dungeon = floors_dungeon[0]
-floor_dungeon_crack = floors_dungeon[1]
-wall_dungeon = pyglet.resource.image('wall_dungeon.png')
-world_stone = pyglet.resource.image('world_stone.png')
+_floors_dungeon = pyglet.image.ImageGrid(load_resource('floors_dungeon.png'), 2, 2)
+floor_dungeon = _floors_dungeon[0]
+floor_dungeon_crack = _floors_dungeon[1]
+
+wall_dungeon = load_resource('wall_dungeon.png')
+world_stone = load_resource('world_stone.png')
+
+map_exit = load_resource('stairs.png')
+
+_doors = pyglet.image.ImageGrid(load_resource('doors.png'), 1, 2)
+map_door_front = _doors[0]
+map_door_side = _doors[1]
 
 
 # Fonts:
 kongtext_font = pyglet.resource.add_font("kongtext.ttf")
-
-
-# Animations:
-# dungeon = pyglet.resource.image('chess_board.png')
-# dungeons = pyglet.image.ImageGrid(dungeon, 2, 2)
-# floor_dungeons = dungeons[0:2]
-# floor_dungeon = pyglet.image.Animation.from_image_sequence(floor_dungeons, 0.1, loop=True)
-

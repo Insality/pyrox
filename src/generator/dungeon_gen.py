@@ -54,6 +54,11 @@ class Room:
 
         return dx + self.pos_x, dy + self.pos_y
 
+    def get_random_pos(self):
+        x = randint(1, self.width-2) + self.pos_x
+        y = randint(1, self.height-2) + self.pos_y
+        return x, y
+
     def overlaps(self, other):
         return ( abs(self.center[0] - other.center[0]) < (self.width // 2) + (other.width // 2) and
                  abs(self.center[1] - other.center[1]) < (self.width // 2) + (other.height // 2) )
@@ -62,7 +67,7 @@ class Room:
 class Dungeon:
     def __init__(self, room_count):
 
-        random.seed(18)
+        # random.seed(10)
         self.room_count = room_count
         self.width = 0
         self.height = 0
@@ -228,6 +233,11 @@ class Dungeon:
 
         for hall in self.halls:
             self.place_hall(hall)
+    #    selecting start and exit pos:
+        pos = self.rooms[0].get_random_pos()
+        self.dungeon[pos[1] + self.room_offset_y][pos[0] + self.room_offset_x] = TILE_ENTER
+        pos = self.rooms[-1].get_random_pos()
+        self.dungeon[pos[1] + self.room_offset_y][pos[0] + self.room_offset_x] = TILE_EXIT
 
     def draw(self):
         for row in self.dungeon:
@@ -269,4 +279,4 @@ def generate(room_count):
     return dungeon.dungeon
 
 if __name__ == "__main__":
-    test_generator(7)
+    test_generator(15)

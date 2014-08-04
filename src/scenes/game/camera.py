@@ -4,17 +4,15 @@ __author__ = 'Insality'
 from src.constants import *
 import cocos
 
-
 class Camera(cocos.layer.Layer):
     is_event_handler = True
 
-    def __init__(self, x, y):
+    def __init__(self, position, obj=None):
         super(Camera, self).__init__()
-        self.x = x
-        self.y = y
+        self.position = position
         self.width = WINDOW_WIDTH
         self.height = WINDOW_HEIGHT
-        self.follow_obj = None
+        self.follow_obj = obj
 
         self.schedule(self.update)
 
@@ -29,10 +27,11 @@ class Camera(cocos.layer.Layer):
         self.x = x - WINDOW_WIDTH//2
         self.y = y - WINDOW_HEIGHT//2
 
-    def is_obj_in(self, obj):
-        if obj.x >= self.x-+TILE_SIZE and obj.x <= self.x+WINDOW_WIDTH+TILE_SIZE and obj.y >= self.y-TILE_SIZE and obj.y<= self.y+WINDOW_HEIGHT+TILE_SIZE:
-            return True
-        return False
+    def is_object_in(self, obj):
+        if obj.x < self.x-TILE_SIZE or obj.x > self.x+WINDOW_WIDTH+TILE_SIZE \
+                or obj.y < self.y-TILE_SIZE or obj.y > self.y+WINDOW_HEIGHT+TILE_SIZE:
+            return False
+        return True
 
     def follow_to(self, obj):
         self.follow_obj = obj
@@ -48,7 +47,7 @@ class Camera(cocos.layer.Layer):
         self.update_following()
 
     def update_following(self):
-        if (self.follow_obj != None):
+        if self.follow_obj != None:
             self.look_at(self.follow_obj)
 
     def update_parent_offset(self):
