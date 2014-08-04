@@ -18,7 +18,7 @@ class Player(creature.Creature):
 
         input = Input()
         self.add(input)
-        self.sight_radius = 4
+        self.sight_radius = 5
         self.buttons = input.buttons
 
     def move_by(self, x, y):

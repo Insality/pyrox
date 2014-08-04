@@ -6,6 +6,7 @@ from src.constants import *
 from pyglet.window import key
 import src.level_manager as level_manager
 from src.scenes.game.camera import Camera
+import pyglet
 
 
 class GameLayer(cocos.layer.ScrollableLayer):
@@ -14,7 +15,7 @@ class GameLayer(cocos.layer.ScrollableLayer):
     def __init__(self):
         super(GameLayer, self).__init__()
 
-        self.level = level_manager.generate_level(8)
+        self.level = level_manager.generate_level(7)
         self.add(self.level)
 
         self.cam = Camera(self.level.player.position, self.level.player)
@@ -41,7 +42,6 @@ class GameLayer(cocos.layer.ScrollableLayer):
 
     def update(self, dt):
         self.level.update()
-
         # for actor in self.get_children():
         # self.collman.add(actor)
         #

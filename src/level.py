@@ -18,7 +18,7 @@ class Level(cocos.layer.Layer):
 
         for y in range(self.height):
             for x in range(self.width):
-                if self.dungeon[y][x] != None:
+                if self.dungeon[y][x]:
                     self.add(self.dungeon[y][x])
 
         self.start_pos = dungeon[start_tile[1]][start_tile[0]].center

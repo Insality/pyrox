@@ -40,5 +40,8 @@ map_door_front = _doors[0]
 map_door_side = _doors[1]
 
 
+pixel = load_resource('pixel.png')
+
+
 # Fonts:
 kongtext_font = pyglet.resource.add_font("kongtext.ttf")
