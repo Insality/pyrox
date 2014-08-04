@@ -18,12 +18,14 @@ class Player(creature.Creature):
 
         input = Input()
         self.add(input)
+        self.sight_radius = 4
         self.buttons = input.buttons
 
     def move_by(self, x, y):
         if self.parent.get(self.x + x, self.y + y).passable:
             self.x += x
             self.y += y
+            self.parent.get_fov((self.x // TILE_SIZE, self.y // TILE_SIZE), self.sight_radius)
 
     def key_press(self, k):
         if k == key.UP:

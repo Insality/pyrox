@@ -7,3 +7,4 @@ from src.constants import *
 class Creature(entity.Entity):
     def __init__(self, img):
         super(Creature, self).__init__(img)
+        self.type = OBJECT_CREATURE

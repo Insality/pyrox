@@ -3,6 +3,7 @@ __author__ = 'Insality'
 import generator.dungeon_gen
 import level
 from entities.map.tiles import *
+from resource import *
 
 
 class LevelManager:

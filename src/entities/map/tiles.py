@@ -2,11 +2,11 @@ __author__ = 'Insality'
 
 import cocos
 from src.constants import *
-from src.resource import *
 
 class Tile(cocos.sprite.Sprite):
     def __init__(self, position, img):
         super(Tile, self).__init__(img, anchor=TILE_ANCHOR)
+        self.type = OBJECT_TILE
         self.position = position
         self.visible = False
 
@@ -15,7 +15,19 @@ class Tile(cocos.sprite.Sprite):
         self.center_y = self.y - TILE_SIZE//4
         self.center = (self.center_x, self.center_y)
 
+        self._brightness = 100
         self.passable = True
+        # Was this tile explored by Player?
+        self.explored = False
+        self.color = (0,0,0)
+
+    def set_brightness(self, value):
+        self._brightness = value
+        self.update_brightness()
+
+    def update_brightness(self):
+        bright = int(255*self._brightness/100)
+        self.color = (bright, bright, bright)
 
 class TileWorldWall(Tile):
     def __init__(self, position, img):

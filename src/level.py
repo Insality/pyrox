@@ -38,8 +38,12 @@ class Level(cocos.layer.Layer):
         return path
 
     def on_mouse_press(self, x, y, buttons, modifiers):
-        pass
-
+        x, y = cocos.director.director.get_virtual_coordinates(x, y)
+        cam = self.parent.cam
+        x = int(x + cam.x)
+        y = int(y + cam.y)
+        tile = self.get(x,y)
+        tile.set_brightness(30)
     def on_key_press(self, k, mods):
         self.player.key_press(k)
 
@@ -47,7 +51,6 @@ class Level(cocos.layer.Layer):
         '''
         return Tile by screen x-y pos
         '''
-        self.dungeon[y // TILE_SIZE][x // TILE_SIZE].color = (100, 100, 100)
         return self.dungeon[y // TILE_SIZE][x // TILE_SIZE]
 
     def get_index_from_pos(self, x, y):
@@ -75,6 +78,79 @@ class Level(cocos.layer.Layer):
         objects = set()
         return objects
 
+
+    def _blocked(self, x, y):
+        return (x < 0 or y < 0
+                or x >= self.width or y >= self.height
+                or not self.dungeon[y][x].passable)
+
+    def _cast_light(self, cx, cy, row, start, end, radius, xx, xy, yx, yy, id):
+        "Recursive lightcasting function"
+        if start < end:
+            return
+        radius_squared = radius*radius
+        for j in range(row, radius+1):
+            dx, dy = -j-1, -j
+            blocked = False
+            while dx <= 0:
+                dx += 1
+                # Translate the dx, dy coordinates into map coordinates:
+                X, Y = cx + dx * xx + dy * xy, cy + dx * yx + dy * yy
+                # l_slope and r_slope store the slopes of the left and right
+                # extremities of the square we're considering:
+                l_slope, r_slope = (dx-0.5)/(dy+0.5), (dx+0.5)/(dy-0.5)
+                if start < r_slope:
+                    continue
+                elif end > l_slope:
+                    break
+                else:
+                    # Our light beam is touching this square; light it:
+                    if dx*dx + dy*dy < radius_squared:
+                        # self.set_lit(X, Y)
+                        self.tiles.append(self.dungeon[Y][X])
+                    if blocked:
+                        # we're scanning a row of blocked squares:
+                        if self._blocked(X, Y):
+                            new_start = r_slope
+                            continue
+                        else:
+                            blocked = False
+                            start = new_start
+                    else:
+                        if self._blocked(X, Y) and j < radius:
+                            # This is a blocking square, start a child scan:
+                            blocked = True
+                            self._cast_light(cx, cy, j+1, start, l_slope,
+                                             radius, xx, xy, yx, yy, id+1)
+                            new_start = r_slope
+            # Row is scanned; do next row unless last square was blocked:
+            if blocked:
+                break
+
+    def get_fov(self, position, radius):
+        '''
+        fov - field of view, get all viewed tiles from position
+        '''
+        # Multipliers for transforming coordinates to other octants:
+        mult = [[1,  0,  0, -1, -1,  0,  0,  1],
+                [0,  1, -1,  0,  0, -1,  1,  0],
+                [0,  1,  1,  0,  0, -1, -1,  0],
+                [1,  0,  0,  1, -1,  0,  0, -1]]
+        self.tiles = []
+        for oct in range(8):
+            self._cast_light(position[0], position[1], 1, 1.0, 0.0, radius, mult[0][oct],
+                             mult[1][oct], mult[2][oct], mult[3][oct], 0)
+
+        for tile in self.get_children():
+            if (tile.type == OBJECT_TILE):
+                tile.set_brightness(20)
+
+        for tile in self.tiles:
+            tile.set_brightness(100)
+            tile.explored = True
+
+        return self.tiles
+
     def update(self, dt=1):
         self._update_visible()
         self._update_z()
@@ -83,6 +159,8 @@ class Level(cocos.layer.Layer):
     def _update_visible(self):
         for ch in self.get_children():
             ch.visible = False
+            if (ch.type == OBJECT_TILE and not ch.explored):
+                continue
             if self.parent.cam.is_object_in(ch):
                 ch.visible = True
 
