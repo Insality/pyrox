@@ -15,7 +15,7 @@ class GameLayer(cocos.layer.ScrollableLayer):
     def __init__(self):
         super(GameLayer, self).__init__()
 
-        self.level = level_manager.generate_level(10)
+        self.level = level_manager.generate_level(8)
         self.add(self.level)
 
         self.cam = Camera(self.level.player.position, self.level.player)
@@ -23,7 +23,6 @@ class GameLayer(cocos.layer.ScrollableLayer):
 
         self.schedule(self.update)
         self.schedule_interval(self.update_second, 1)
-
 
     def on_key_press(self, k, modifiers):
         move = TILE_SIZE
@@ -42,12 +41,6 @@ class GameLayer(cocos.layer.ScrollableLayer):
 
     def update(self, dt):
         self.level.update()
-        # for actor in self.get_children():
-        # self.collman.add(actor)
-        #
-        # for first, other in self.collman.iter_all_collisions():
-        # first.collide(other)
-        #     other.collide(first)
 
     def update_second(self, dt):
         pass

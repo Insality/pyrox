@@ -152,7 +152,7 @@ class Dungeon:
         self.compile()
 
     def make_dungeon(self):
-        self.dungeon = [[TILE_EMPTY for col in range(self.width)] for row in range(self.height)]
+        self.dungeon = [[TILE_SOLID for col in range(self.width)] for row in range(self.height)]
 
     def make_first_room(self, x, y, width, height):
         self.rooms.append(Room(x, y, width, height))
@@ -218,12 +218,13 @@ class Dungeon:
             if max_y < room.pos_y + room.height:
                 max_y = room.pos_y + room.height
 
-        self.width = max_x - min_x
-        self.height = max_y - min_y
+        # +2 - add one-width WORLD_STONE around map
+        self.width = max_x - min_x + 2
+        self.height = max_y - min_y + 2
 
-        # offsets for start with (0,0)
-        self.room_offset_x = -min_x
-        self.room_offset_y = -min_y
+        # offsets for start with (0,0), +1 - world-stone border
+        self.room_offset_x = -min_x + 1
+        self.room_offset_y = -min_y + 1
 
         self.make_dungeon()
 
@@ -238,6 +239,27 @@ class Dungeon:
         self.dungeon[pos[1] + self.room_offset_y][pos[0] + self.room_offset_x] = TILE_ENTER
         pos = self.rooms[-1].get_random_pos()
         self.dungeon[pos[1] + self.room_offset_y][pos[0] + self.room_offset_x] = TILE_EXIT
+
+        # self.crop_solid()
+
+    def crop_solid(self):
+        for y in range(1, self.height-1):
+            for x in range(1, self.width-1):
+                if (not TILE_WALL in self.get_neighbors8(x, y)):
+                    if (self.dungeon[y][x] == TILE_SOLID):
+                        self.dungeon[y][x] = TILE_EMPTY
+
+    def get_neighbors8(self, x, y):
+        neightbors = []
+        neightbors.append(self.dungeon[y+1][x-1])
+        neightbors.append(self.dungeon[y+1][x])
+        neightbors.append(self.dungeon[y+1][x+1])
+        neightbors.append(self.dungeon[y][x-1])
+        neightbors.append(self.dungeon[y][x+1])
+        neightbors.append(self.dungeon[y-1][x-1])
+        neightbors.append(self.dungeon[y-1][x])
+        neightbors.append(self.dungeon[y-1][x+1])
+        return neightbors
 
     def draw(self):
         for row in self.dungeon:
@@ -279,4 +301,4 @@ def generate(room_count):
     return dungeon.dungeon
 
 if __name__ == "__main__":
-    test_generator(15)
+    test_generator(6)

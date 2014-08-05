@@ -2,12 +2,14 @@ __author__ = 'Insality'
 
 import cocos
 from src.constants import *
+from src.resource import *
+from src.entities.entity import Entity
 
-class Tile(cocos.sprite.Sprite):
+
+class Tile(Entity):
     def __init__(self, position, img):
-        super(Tile, self).__init__(img, anchor=TILE_ANCHOR)
+        super(Tile, self).__init__(position, img, anchor=TILE_ANCHOR)
         self.type = OBJECT_TILE
-        self.position = position
         self.visible = False
 
         self.center_x = self.x + TILE_SIZE//2
@@ -22,13 +24,30 @@ class Tile(cocos.sprite.Sprite):
         self.color = (0,0,0)
         self.minimap_color = (0,0,0)
 
+        # Link to creature and object on this tile
+        self.creature_on = None
+        self.object_on = None
+
     def set_brightness(self, value):
         self._brightness = value
         self.update_brightness()
 
+    def action(self, other):
+        if self.creature_on:
+            self.creature_on.action(other)
+            return
+        if self.object_on:
+            self.object_on.action(other)
+            return
+        self._action(other)
+
+    def _action(self, other):
+        pass
+
     def update_brightness(self):
         bright = int(255*self._brightness/100)
         self.color = (bright, bright, bright)
+
 
 class TileWorldWall(Tile):
     def __init__(self, position, img):
@@ -36,11 +55,18 @@ class TileWorldWall(Tile):
         self.passable = False
         self.minimap_color = (60, 60, 60)
 
+
 class TileWall(Tile):
     def __init__(self, position, img):
         super(TileWall, self).__init__(position, img)
         self.passable = False
         self.minimap_color = (100,100,150)
+
+    def _action(self, other):
+        self.image = floor_dungeon
+        self.passable = True
+        self.minimap_color = (150,150,150)
+
 
 class TileFloor(Tile):
     def __init__(self, position, img):

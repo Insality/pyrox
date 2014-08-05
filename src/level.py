@@ -9,9 +9,12 @@ import cocos.collision_model as cm
 class Level(cocos.layer.Layer):
     is_event_handler = True
 
-    def __init__(self, dungeon, start_tile=(0, 0)):
+    def __init__(self, dungeon, start_tile=(0, 0), creatures=[], objects=[]):
         super(Level, self).__init__()
 
+
+        self.objects = objects
+        self.creatures = creatures
         self.dungeon = dungeon
         self.width = len(dungeon[0])
         self.height = len(dungeon)
@@ -21,9 +24,23 @@ class Level(cocos.layer.Layer):
                 if self.dungeon[y][x]:
                     self.add(self.dungeon[y][x])
 
+        for obj in self.objects:
+            self.add(obj)
+            tile = self.get(obj.x, obj.y)
+            if not tile.object_on:
+                tile.object_on = obj
+
+        for creature in self.creatures:
+            self.add(creature)
+            tile = self.get(creature.x, creature.y)
+            if not tile.creature_on:
+                tile.creature_on = creature
+
+        # Player here
         self.start_pos = dungeon[start_tile[1]][start_tile[0]].center
         self.player = Player(self.start_pos)
         self.add(self.player)
+        self.creatures.append(self.player)
 
         self.collman = cm.CollisionManagerGrid(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT, TILE_SIZE, TILE_SIZE)
 
@@ -105,7 +122,7 @@ class Level(cocos.layer.Layer):
                     break
                 else:
                     # Our light beam is touching this square; light it:
-                    if dx*dx + dy*dy < radius_squared:
+                    if dx*dx + dy*dy < radius_squared and X>=0 and Y>=0 and X<self.width and Y<self.height:
                         # self.set_lit(X, Y)
                         self.tiles.append(self.dungeon[Y][X])
                     if blocked:
@@ -144,7 +161,7 @@ class Level(cocos.layer.Layer):
         self.tiles.append(self.dungeon[position[1]][position[0]])
         for tile in self.get_children():
             if (tile.type == OBJECT_TILE):
-                tile.set_brightness(20)
+                tile.set_brightness(40)
 
         for tile in self.tiles:
             tile.set_brightness(100)
@@ -178,6 +195,9 @@ class Level(cocos.layer.Layer):
                 ty = ch[0]
                 # ch[1].y - cur y in real obj (from down to up). That's why WHeight - ch[1].y
                 ty_obj = WINDOW_HEIGHT - ch[1].y
+                # if now checking tile: get -2y , for low render prioriry
+                if ch[1].type == OBJECT_TILE:
+                    ty_obj -= 2
                 if ty != ty_obj:
                     tmp = list(ch)
                     tmp[0] = ty_obj

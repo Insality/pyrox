@@ -5,16 +5,17 @@ import cocos
 
 from src.scenes.input_layer import Input
 from game_layer import GameLayer
-from pyglet.gl import *
-from pyglet.graphics import *
 from src.resource import *
-import src.resource
+from src.constants import *
+from pyglet.gl import *
+
 
 class Game(cocos.scene.Scene):
     def __init__(self):
         super(Game, self).__init__()
 
-        self.add(Input(), z=0, name='input')
+        self.input = Input()
+        self.add(self.input, z=0, name='input')
 
         self.game_layer = self.get_game_layer()
         self.add(self.game_layer, z=1, name='game_layer')
@@ -28,7 +29,6 @@ class Game(cocos.scene.Scene):
     def get_hud_layer(self):
         return HUDLayer()
 
-
 class HUDLayer(cocos.layer.Layer):
     def __init__(self):
         super(HUDLayer, self).__init__()
@@ -39,11 +39,10 @@ class HUDLayer(cocos.layer.Layer):
 
     def init_after(self, dt):
         self.level = self.parent.game_layer.level
-        self.minimap = Minimap(self.level.dungeon)
+        self.minimap = Minimap(self.level.dungeon, self.level.creatures, self.level.objects)
         self.add(self.minimap)
         self.schedule(self.update)
         self.unschedule(self.init_after)
-
 
     def update(self, dt):
         self.draw_minimap()
@@ -53,9 +52,12 @@ class HUDLayer(cocos.layer.Layer):
 
 
 class Minimap(cocos.sprite.Sprite):
-    def __init__(self, dungeon):
+    def __init__(self, dungeon, creatures, objects):
 
         self.dungeon = dungeon
+        self.creatures = creatures
+        self.objects = objects
+
         self.format = 'RGBA'
         self.map_width = len(dungeon[0])
         self.map_height = len(dungeon)
@@ -69,12 +71,13 @@ class Minimap(cocos.sprite.Sprite):
 
         self.minimap.format = self.format
         datas = ''.join(self.data)
-        self.minimap.set_data(self.format, self.map_width*len(self.format), datas)
+        self.minimap.set_data(self.format, self.map_width * len(self.format), datas)
 
         super(Minimap, self).__init__(self.minimap)
 
+
         w, h = cocos.director.director.get_window_size()
-        self.x = w-self.map_width
+        self.x = w - self.map_width
         self.y = self.map_height
 
     def _setPixel(self, x, y, color, alpha):
@@ -94,11 +97,21 @@ class Minimap(cocos.sprite.Sprite):
     def render(self):
         for y in range(self.map_height):
             for x in range(self.map_width):
-                if self.dungeon[y][x].explored:
+                if (self.dungeon[y][x] and self.dungeon[y][x].explored):
                     self.setPixel(x, y, self.dungeon[y][x].minimap_color)
+
+        for object in self.objects:
+            self.setPixel(object.x // TILE_SIZE, (object.y) // TILE_SIZE, object.minimap_color)
+
+        for creature in self.creatures:
+            self.setPixel(creature.x // TILE_SIZE, creature.y // TILE_SIZE, creature.minimap_color)
+
         data = ''.join(self.data)
-        self.minimap.set_data(self.format, self.map_width*len(self.format), data)
+        self.minimap.set_data(self.format, self.map_width * len(self.format), data)
         self.image = self.minimap
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+
+
 
 
 

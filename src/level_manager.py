@@ -4,6 +4,7 @@ import generator.dungeon_gen
 import level
 from entities.map.tiles import *
 from resource import *
+from entities.game_object import *
 
 
 class LevelManager:
@@ -34,10 +35,11 @@ class LevelManager:
         # reverse by y to new coord. system:
         ascii_lvl.reverse()
 
+        objects = []
         start_tile = (0, 0)
         for y in range(height):
             for x in range(width):
-                position = (x * TILE_SIZE, TILE_ANCHOR[1] + y * TILE_SIZE)
+                position = (x * TILE_SIZE, y * TILE_SIZE)
 
                 if ascii_lvl[y][x] == TILE_SOLID or ascii_lvl[y][x] == TILE_EMPTY:
                     tile = TileWorldWall(position, world_stone)
@@ -46,7 +48,8 @@ class LevelManager:
                 elif ascii_lvl[y][x] == TILE_WALL:
                     tile = TileWall(position, wall_dungeon)
                 elif ascii_lvl[y][x] == TILE_EXIT:
-                    tile = TileFloor(position, map_exit)
+                    tile = TileFloor(position, floor_dungeon_crack)
+                    objects.append(LevelExit(position))
                 elif ascii_lvl[y][x] == TILE_ENTER:
                     tile = TileFloor(position, floor_dungeon_crack)
                     start_tile = (x, y)
@@ -56,7 +59,7 @@ class LevelManager:
                 if tile:
                     dungeon[y][x] = tile
 
-        return level.Level(dungeon, start_tile)
+        return level.Level(dungeon, start_tile, objects=objects)
 
 
 _inst = LevelManager()
