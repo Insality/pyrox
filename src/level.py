@@ -141,6 +141,7 @@ class Level(cocos.layer.Layer):
             self._cast_light(position[0], position[1], 1, 1.0, 0.0, radius, mult[0][oct],
                              mult[1][oct], mult[2][oct], mult[3][oct], 0)
 
+        self.tiles.append(self.dungeon[position[1]][position[0]])
         for tile in self.get_children():
             if (tile.type == OBJECT_TILE):
                 tile.set_brightness(20)

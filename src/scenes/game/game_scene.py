@@ -8,7 +8,7 @@ from game_layer import GameLayer
 from pyglet.gl import *
 from pyglet.graphics import *
 from src.resource import *
-
+import src.resource
 
 class Game(cocos.scene.Scene):
     def __init__(self):
@@ -52,27 +52,55 @@ class HUDLayer(cocos.layer.Layer):
         self.minimap.render()
 
 
-class Minimap(cocos.layer.Layer):
+class Minimap(cocos.sprite.Sprite):
     def __init__(self, dungeon):
-        super(Minimap, self).__init__()
-        self.dungeon = dungeon
 
+        self.dungeon = dungeon
+        self.format = 'RGBA'
         self.map_width = len(dungeon[0])
         self.map_height = len(dungeon)
-        w, h = cocos.director.director.get_window_size()
-        self.pixel_size = 2
-        self.x = w - self.map_width * self.pixel_size
-        self.y = self.map_height * self.pixel_size
+
+        self.minimap = pyglet.image.create(self.map_width, self.map_height)
+        self.data = len(self.format) * self.map_width * self.map_height * [chr(0)]
+
         for y in range(self.map_height):
             for x in range(self.map_width):
-                if self.dungeon[y][x]:
-                    sprite = cocos.sprite.Sprite(pixel)
-                    sprite.scale = 1
-                    sprite.position = x, y
-                    sprite.visible = self.dungeon[y][x].visible
-                    sprite.color = self.dungeon[y][x].minimap_color
-                    self.add(sprite)
+                self._setPixel(x, y, (230, 130, 0), 0)
+
+        self.minimap.format = self.format
+        datas = ''.join(self.data)
+        self.minimap.set_data(self.format, self.map_width*len(self.format), datas)
+
+        super(Minimap, self).__init__(self.minimap)
+
+        w, h = cocos.director.director.get_window_size()
+        self.x = w-self.map_width
+        self.y = self.map_height
+
+    def _setPixel(self, x, y, color, alpha):
+        ''' color is tuple of (R, G, B) as integers'''
+        pixelIdx = x + (y * self.map_width)
+        byteIdx = pixelIdx * len(self.format)
+        r, g, b = color
+        self.data[byteIdx] = chr(r)
+        self.data[byteIdx + 1] = chr(g)
+        self.data[byteIdx + 2] = chr(b)
+        self.data[byteIdx + 3] = chr(alpha)
+
+    def setPixel(self, x, y, color):
+        self._setPixel(x, y, color, 255)
+
 
     def render(self):
-        for sprite in self.get_children():
-            sprite.visible = self.dungeon[sprite.y][sprite.x].explored
+        for y in range(self.map_height):
+            for x in range(self.map_width):
+                if self.dungeon[y][x].explored:
+                    self.setPixel(x, y, self.dungeon[y][x].minimap_color)
+        data = ''.join(self.data)
+        self.minimap.set_data(self.format, self.map_width*len(self.format), data)
+        self.image = self.minimap
+
+
+
+
+

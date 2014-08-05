@@ -18,7 +18,7 @@ class Player(creature.Creature):
 
         input = Input()
         self.add(input)
-        self.sight_radius = 5
+        self.sight_radius = 6
         self.buttons = input.buttons
 
     def move_by(self, x, y):
@@ -28,13 +28,16 @@ class Player(creature.Creature):
             self.parent.get_fov((self.x // TILE_SIZE, self.y // TILE_SIZE), self.sight_radius)
 
     def key_press(self, k):
+        speed = self.speed
+        if key.LSHIFT in self.buttons:
+            speed *= 2
         if k == key.UP:
-            self.move_by(0, self.speed)
+            self.move_by(0, speed)
         if k == key.DOWN:
-            self.move_by(0, -self.speed)
+            self.move_by(0, -speed)
         if k == key.RIGHT:
-            self.move_by(self.speed, 0)
+            self.move_by(speed, 0)
         if k == key.LEFT:
-            self.move_by(-self.speed, 0)
+            self.move_by(-speed, 0)
 
         self.parent.parent.cam.update_following()

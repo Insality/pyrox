@@ -1,3 +1,5 @@
+from pyglet.image import Texture
+
 __author__ = 'Insality'
 
 import pyglet
@@ -33,6 +35,8 @@ floor_dungeon_crack = _floors_dungeon[1]
 wall_dungeon = load_resource('wall_dungeon.png')
 world_stone = load_resource('world_stone.png')
 
+
+
 map_exit = load_resource('stairs.png')
 
 _doors = pyglet.image.ImageGrid(load_resource('doors.png'), 1, 2)
@@ -41,7 +45,6 @@ map_door_side = _doors[1]
 
 
 pixel = load_resource('pixel.png')
-
 
 # Fonts:
 kongtext_font = pyglet.resource.add_font("kongtext.ttf")
