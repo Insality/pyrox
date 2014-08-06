@@ -23,11 +23,11 @@ class LevelExit(GameObject):
 
     def action(self, other):
         print("go_to_next_level")
-        for im in other.image.frames:
-            im.duration = 0.1
-        # from src.scenes.game.game_scene import Game
-        # game_scene = Game()
-        # director.replace(game_scene)
+        # for im in other.image.frames:
+        #     im.duration = 0.1
+        from src.scenes.game.game_scene import Game
+        game_scene = Game()
+        director.push(game_scene)
 
 
 

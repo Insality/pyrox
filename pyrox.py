@@ -23,5 +23,5 @@ def main():
     director.run(game_scene)
 
 if __name__ == '__main__':
-    # main()
-    cProfile.run('main()', 'restat')
+    main()
+    # cProfile.run('main()', 'restat')

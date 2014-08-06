@@ -17,7 +17,7 @@ class GameLayer(cocos.layer.ScrollableLayer):
 
         log("Initialize Game_Layer")
 
-        self.level = level_manager.generate_level(35)
+        self.level = level_manager.generate_level(4)
         self.add(self.level)
 
         self.cam = Camera(self.level.player.position, self.level.player)
@@ -43,6 +43,11 @@ class GameLayer(cocos.layer.ScrollableLayer):
 
     def update(self, dt):
         self.level.update()
+
+    def on_exit(self):
+        super(GameLayer, self).on_exit()
+        log("On exit call from game_layer")
+        print(len(self.level.get_children()))
 
     def update_second(self, dt):
         pass

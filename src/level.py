@@ -5,13 +5,14 @@ import cocos
 from constants import *
 from entities.player import Player
 import cocos.collision_model as cm
-import log
+from src.log import log
 
 
 class Level(cocos.layer.Layer):
     is_event_handler = True
 
     def __init__(self, dungeon, start_tile=(0, 0), creatures=[], objects=[]):
+        print creatures
 
         super(Level, self).__init__()
         self.objects = objects
@@ -19,7 +20,6 @@ class Level(cocos.layer.Layer):
         self.dungeon = dungeon
         self.width = len(dungeon[0])
         self.height = len(dungeon)
-        log.log("Loading Level object, map sise: %i:%i" % (self.width, self.height))
 
         for y in range(self.height):
             for x in range(self.width):
@@ -47,6 +47,13 @@ class Level(cocos.layer.Layer):
         self.collman = cm.CollisionManagerGrid(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT, TILE_SIZE, TILE_SIZE)
 
         self.schedule(self.update)
+
+
+        log("Loading Level object, map sise: %i:%i" % (self.width, self.height))
+        log("Count of creatures: %i. Count of Objects: %i" % (len(self.creatures), len(self.objects)) )
+        for x in self.get_children():
+            if x.type != OBJECT_TILE:
+                log(str(x))
 
 
     def get_path(self, a, b):

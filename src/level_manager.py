@@ -41,8 +41,11 @@ class LevelManager:
 
                 if ascii_lvl[y][x] == TILE_SOLID or ascii_lvl[y][x] == TILE_EMPTY:
                     tile = TileWorldWall(position, world_stone)
-                elif ascii_lvl[y][x] == TILE_FLOOR or ascii_lvl[y][x] == TILE_DOOR:
+                elif ascii_lvl[y][x] == TILE_FLOOR:
                     tile = TileFloor(position, floor_dungeon)
+                elif ascii_lvl[y][x] == TILE_DOOR:
+                    tile = TileFloor(position, floor_dungeon)
+                    # objects.append(LevelExit(position))
                 elif ascii_lvl[y][x] == TILE_WALL:
                     tile = TileWall(position, wall_dungeon)
                 elif ascii_lvl[y][x] == TILE_EXIT:
@@ -57,7 +60,7 @@ class LevelManager:
                 if tile:
                     dungeon[y][x] = tile
 
-        return level.Level(dungeon, start_tile, objects=objects)
+        return level.Level(dungeon, start_tile, creatures=[], objects=objects)
 
 
 _inst = LevelManager()

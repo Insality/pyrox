@@ -24,6 +24,10 @@ class Player(creature.Creature):
         self.buttons = input.buttons
         self.minimap_color = (255, 0, 0)
 
+    def init_after(self, dt=0):
+        super(Player, self).init_after()
+        self._update_fov()
+
     def move_by(self, x, y):
         tile = self.parent.get(self.x + x, self.y + y)
         if tile.passable:
@@ -31,6 +35,9 @@ class Player(creature.Creature):
             self.y += y
 
         tile.action(self)
+        self._update_fov()
+
+    def _update_fov(self):
         self.parent.get_fov((self.x // TILE_SIZE, self.y // TILE_SIZE), self.sight_radius)
 
 
