@@ -6,6 +6,7 @@ from src.resource import *
 from src.constants import *
 from pyglet.window import key
 from src.scenes.input_layer import Input
+from src.log import log
 
 
 class Player(creature.Creature):
@@ -13,8 +14,10 @@ class Player(creature.Creature):
 
     def __init__(self, position):
         super(Player, self).__init__(position, player_stay)
-        self.speed = TILE_SIZE
 
+        log("Initialize Player object. Position: %i:%i" % position)
+
+        self.speed = TILE_SIZE
         input = Input()
         self.add(input)
         self.sight_radius = 6

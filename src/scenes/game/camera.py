@@ -3,12 +3,14 @@ __author__ = 'Insality'
 
 from src.constants import *
 import cocos
+from src.log import log
 
 class Camera(cocos.layer.Layer):
     is_event_handler = True
 
     def __init__(self, position, obj=None):
         super(Camera, self).__init__()
+        log("Initialize Camera object")
         self.position = position
         self.width = WINDOW_WIDTH
         self.height = WINDOW_HEIGHT

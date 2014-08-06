@@ -2,9 +2,8 @@
 __author__ = 'Insality'
 
 from src.constants import *
-import math
 from random import randint, choice
-import random
+from src.log import log
 
 
 class Hall:
@@ -134,13 +133,12 @@ class Dungeon:
 
             for room in self.rooms:
                 if room_new.overlaps(room):
-                    print("new room overlap old rooms")
                     room_new = None
                     break
 
         # If new room was not created
         if (room_new == None):
-            print ("Cannot create new room, remove aviable direction")
+            log("Cannot create new room, remove aviable direction")
             room_from.free_direction.remove(direction)
             return
 

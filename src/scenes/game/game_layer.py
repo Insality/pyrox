@@ -1,13 +1,13 @@
 # coding: utf-8
 __author__ = 'Insality'
+
 import cocos
 
 from src.constants import *
 from pyglet.window import key
 import src.level_manager as level_manager
 from src.scenes.game.camera import Camera
-import pyglet
-
+from src.log import log
 
 class GameLayer(cocos.layer.ScrollableLayer):
     is_event_handler = True
@@ -15,7 +15,9 @@ class GameLayer(cocos.layer.ScrollableLayer):
     def __init__(self):
         super(GameLayer, self).__init__()
 
-        self.level = level_manager.generate_level(8)
+        log("Initialize Game_Layer")
+
+        self.level = level_manager.generate_level(35)
         self.add(self.level)
 
         self.cam = Camera(self.level.player.position, self.level.player)

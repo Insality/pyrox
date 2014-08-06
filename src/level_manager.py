@@ -3,9 +3,8 @@ __author__ = 'Insality'
 import generator.dungeon_gen
 import level
 from entities.map.tiles import *
-from resource import *
 from entities.game_object import *
-
+from log import log
 
 class LevelManager:
     def __init__(self):
@@ -26,10 +25,9 @@ class LevelManager:
         pass
 
     def ascii_to_level(self, ascii_lvl):
-
         width = len(ascii_lvl[0])
         height = len(ascii_lvl)
-        print ("Translate ascii to obj. %i:%i" % (width, height))
+        log("Translate ascii level to obj level. Size %i:%i" % (width, height))
         dungeon = [[None for col in range(width)] for row in range(height)]
 
         # reverse by y to new coord. system:

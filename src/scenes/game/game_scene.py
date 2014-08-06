@@ -8,11 +8,14 @@ from game_layer import GameLayer
 from src.resource import *
 from src.constants import *
 from pyglet.gl import *
+from src.log import log
 
 
 class Game(cocos.scene.Scene):
     def __init__(self):
         super(Game, self).__init__()
+
+        log("Starting Game_Scene...")
 
         self.input = Input()
         self.add(self.input, z=0, name='input')

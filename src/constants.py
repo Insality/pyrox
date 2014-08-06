@@ -2,6 +2,7 @@ __author__ = 'Insality'
 
 # Game consts
 GAME_NAME = "Pyrox"
+DEBUG = True
 
 # Directions
 RIGHT = 0

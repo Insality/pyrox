@@ -7,14 +7,14 @@ from cocos.director import director
 from src.scenes.game.game_scene import Game
 from pyglet.gl import *
 import cProfile
-
+from src.log import log
 
 def init_gl():
     glEnable(GL_TEXTURE_2D)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
 def main():
-    print("Hello, Pyrox!")
+    log("Starting Pyrox...")
 
     init_gl()
     director.init(resizable=True, caption=GAME_NAME, width=WINDOW_WIDTH, height=WINDOW_HEIGHT)
@@ -23,5 +23,5 @@ def main():
     director.run(game_scene)
 
 if __name__ == '__main__':
-    main()
-    # cProfile.run('main()', 'restat')
+    # main()
+    cProfile.run('main()', 'restat')

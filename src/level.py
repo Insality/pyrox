@@ -5,19 +5,21 @@ import cocos
 from constants import *
 from entities.player import Player
 import cocos.collision_model as cm
+import log
+
 
 class Level(cocos.layer.Layer):
     is_event_handler = True
 
     def __init__(self, dungeon, start_tile=(0, 0), creatures=[], objects=[]):
+
         super(Level, self).__init__()
-
-
         self.objects = objects
         self.creatures = creatures
         self.dungeon = dungeon
         self.width = len(dungeon[0])
         self.height = len(dungeon)
+        log.log("Loading Level object, map sise: %i:%i" % (self.width, self.height))
 
         for y in range(self.height):
             for x in range(self.width):
@@ -59,39 +61,30 @@ class Level(cocos.layer.Layer):
         cam = self.parent.cam
         x = int(x + cam.x)
         y = int(y + cam.y)
-        tile = self.get(x,y)
+        tile = self.get(x, y)
         tile.set_brightness(30)
+
     def on_key_press(self, k, mods):
         self.player.key_press(k)
 
     def get(self, x, y):
-        '''
-        return Tile by screen x-y pos
-        '''
+        ''' return Tile by screen x-y pos '''
         return self.dungeon[y // TILE_SIZE][x // TILE_SIZE]
 
     def get_index_from_pos(self, x, y):
-        '''
-        return Tile index(x,y) from screen pos
-        '''
+        ''' return Tile index(x,y) from screen pos '''
         return x // TILE_SIZE, y // TILE_SIZE
 
     def get_by_index(self, x, y):
-        '''
-        return Tile by index
-        '''
+        ''' return Tile by index '''
         return self.dungeon[y][x]
 
     def get_object(self, x, y):
-        '''
-        get the Object in x-y pos. If no object - return tile
-        '''
+        ''' get the Object in x-y pos. If no object - return tile '''
         pass
 
     def get_objects_in_area(self, a, b):
-        '''
-        return all objects in arena (exclude tiles) from a to b rect, by screen pos
-        '''
+        ''' return all objects in arena (exclude tiles) from a to b rect, by screen pos '''
         objects = set()
         return objects
 
@@ -102,12 +95,12 @@ class Level(cocos.layer.Layer):
                 or not self.dungeon[y][x].passable)
 
     def _cast_light(self, cx, cy, row, start, end, radius, xx, xy, yx, yy, id):
-        "Recursive lightcasting function"
+        ''' Recursive lightcasting function '''
         if start < end:
             return
-        radius_squared = radius*radius
-        for j in range(row, radius+1):
-            dx, dy = -j-1, -j
+        radius_squared = radius * radius
+        for j in range(row, radius + 1):
+            dx, dy = -j - 1, -j
             blocked = False
             while dx <= 0:
                 dx += 1
@@ -115,14 +108,14 @@ class Level(cocos.layer.Layer):
                 X, Y = cx + dx * xx + dy * xy, cy + dx * yx + dy * yy
                 # l_slope and r_slope store the slopes of the left and right
                 # extremities of the square we're considering:
-                l_slope, r_slope = (dx-0.5)/(dy+0.5), (dx+0.5)/(dy-0.5)
+                l_slope, r_slope = (dx - 0.5) / (dy + 0.5), (dx + 0.5) / (dy - 0.5)
                 if start < r_slope:
                     continue
                 elif end > l_slope:
                     break
                 else:
                     # Our light beam is touching this square; light it:
-                    if dx*dx + dy*dy < radius_squared and X>=0 and Y>=0 and X<self.width and Y<self.height:
+                    if dx * dx + dy * dy < radius_squared and X >= 0 and Y >= 0 and X < self.width and Y < self.height:
                         # self.set_lit(X, Y)
                         self.tiles.append(self.dungeon[Y][X])
                     if blocked:
@@ -137,22 +130,20 @@ class Level(cocos.layer.Layer):
                         if self._blocked(X, Y) and j < radius:
                             # This is a blocking square, start a child scan:
                             blocked = True
-                            self._cast_light(cx, cy, j+1, start, l_slope,
-                                             radius, xx, xy, yx, yy, id+1)
+                            self._cast_light(cx, cy, j + 1, start, l_slope,
+                                             radius, xx, xy, yx, yy, id + 1)
                             new_start = r_slope
             # Row is scanned; do next row unless last square was blocked:
             if blocked:
                 break
 
     def get_fov(self, position, radius):
-        '''
-        fov - field of view, get all viewed tiles from position
-        '''
+        ''' fov - field of view, get all viewed tiles from position '''
         # Multipliers for transforming coordinates to other octants:
-        mult = [[1,  0,  0, -1, -1,  0,  0,  1],
-                [0,  1, -1,  0,  0, -1,  1,  0],
-                [0,  1,  1,  0,  0, -1, -1,  0],
-                [1,  0,  0,  1, -1,  0,  0, -1]]
+        mult = [[1, 0, 0, -1, -1, 0, 0, 1],
+                [0, 1, -1, 0, 0, -1, 1, 0],
+                [0, 1, 1, 0, 0, -1, -1, 0],
+                [1, 0, 0, 1, -1, 0, 0, -1]]
         self.tiles = []
         for oct in range(8):
             self._cast_light(position[0], position[1], 1, 1.0, 0.0, radius, mult[0][oct],
@@ -183,10 +174,8 @@ class Level(cocos.layer.Layer):
                 ch.visible = True
 
     def _update_z(self):
-        '''
-        Sort all children objects by Y coord to correct render
-        TODO: grab objects placed in camera zone only
-        '''
+        ''' Sort all children objects by Y coord to correct render
+            TODO: grab objects placed in camera zone only '''
         is_changed = False
         for i in range(len(self.children)):
             ch = self.children[i]
