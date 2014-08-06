@@ -47,7 +47,6 @@ class GameLayer(cocos.layer.ScrollableLayer):
     def on_exit(self):
         super(GameLayer, self).on_exit()
         log("On exit call from game_layer")
-        print(len(self.level.get_children()))
 
     def update_second(self, dt):
         pass

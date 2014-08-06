@@ -27,6 +27,11 @@ _player = pyglet.image.ImageGrid(load_resource('player.png'), 1, 2)
 _player_stay_seq = _player[0:2]
 player_stay = pyglet.image.Animation.from_image_sequence(_player_stay_seq, 0.3, loop=True)
 
+# Enemies:
+_enemy_guard = pyglet.image.ImageGrid(load_resource('guard.png'), 1, 4)
+_enemy_guard_seq = _enemy_guard[0:4]
+enemy_guard = pyglet.image.Animation.from_image_sequence(_enemy_guard_seq, 0.2, loop=True)
+
 # Map tiles:
 _floors_dungeon = pyglet.image.ImageGrid(load_resource('floors_dungeon.png'), 2, 2)
 floor_dungeon = _floors_dungeon[0]

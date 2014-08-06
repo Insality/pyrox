@@ -11,7 +11,7 @@ from src.log import log
 class Level(cocos.layer.Layer):
     is_event_handler = True
 
-    def __init__(self, dungeon, start_tile=(0, 0), creatures=[], objects=[]):
+    def __init__(self, dungeon, start_tile, creatures, objects):
         print creatures
 
         super(Level, self).__init__()

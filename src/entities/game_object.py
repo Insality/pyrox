@@ -5,6 +5,7 @@ import entity
 from src.constants import *
 from src.resource import *
 from cocos.director import director
+from cocos.scenes import *
 
 class GameObject(entity.Entity):
     def __init__(self, position, img):
@@ -27,7 +28,7 @@ class LevelExit(GameObject):
         #     im.duration = 0.1
         from src.scenes.game.game_scene import Game
         game_scene = Game()
-        director.push(game_scene)
+        director.push( FadeTransition(game_scene, duration=1) )
 
 
 
