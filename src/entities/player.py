@@ -13,8 +13,7 @@ class Player(creature.Creature):
     is_event_handler = True
 
     def __init__(self, position):
-        super(Player, self).__init__(position, enemy_guard)
-        # super(Player, self).__init__(position, player_stay)
+        super(Player, self).__init__(position, player_stay)
 
         log("Initialize Player object. Position: %i:%i" % position)
 

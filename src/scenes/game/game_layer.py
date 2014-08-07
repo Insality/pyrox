@@ -17,7 +17,7 @@ class GameLayer(cocos.layer.ScrollableLayer):
 
         log("Initialize Game_Layer")
 
-        self.level = level_manager.generate_level(4)
+        self.level = level_manager.generate_level(5)
         self.add(self.level)
 
         self.cam = Camera(self.level.player.position, self.level.player)

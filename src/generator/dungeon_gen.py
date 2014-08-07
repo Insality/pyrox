@@ -233,12 +233,20 @@ class Dungeon:
         for hall in self.halls:
             self.place_hall(hall)
     #    selecting start and exit pos:
+    #     TODO: rework this +offset pos
         pos = self.rooms[0].get_random_pos()
         self.dungeon[pos[1] + self.room_offset_y][pos[0] + self.room_offset_x] = TILE_ENTER
         pos = self.rooms[-1].get_random_pos()
         self.dungeon[pos[1] + self.room_offset_y][pos[0] + self.room_offset_x] = TILE_EXIT
 
+        for room in self.rooms[1:]:
+            self.place_enemy(room)
         # self.crop_solid()
+
+    def place_enemy(self, room):
+        for i in range(2):
+            pos = room.get_random_pos()
+            self.dungeon[pos[1] + self.room_offset_y][pos[0] + self.room_offset_x] = TILE_ENEMY
 
     def crop_solid(self):
         for y in range(1, self.height-1):

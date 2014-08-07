@@ -48,3 +48,5 @@ TILE_WALL = '+'
 TILE_DOOR = 'D'
 TILE_ENTER = '<'
 TILE_EXIT = '>'
+
+TILE_ENEMY = 'E'
