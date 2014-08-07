@@ -5,28 +5,30 @@ import creature
 from src.resource import *
 from src.constants import *
 from pyglet.window import key
-from src.scenes.input_layer import Input
 from src.log import log
+from cocos.director import director
 
 
 class Player(creature.Creature):
     is_event_handler = True
 
     def __init__(self, position):
-        super(Player, self).__init__(position, player_stay)
+        super(Player, self).__init__(position, enemy_guard)
+        # super(Player, self).__init__(position, player_stay)
 
         log("Initialize Player object. Position: %i:%i" % position)
 
         self.speed = TILE_SIZE
-        input = Input()
-        self.add(input)
         self.sight_radius = 6
-        self.buttons = input.buttons
-        self.minimap_color = (255, 0, 0)
+        self.buttons = set()
+        self.minimap_color = (0, 250, 0)
 
     def init_after(self, dt=0):
         super(Player, self).init_after()
         self._update_fov()
+
+        game_scene = self.parent.parent.parent.input
+        self.buttons = game_scene.buttons
 
     def move_by(self, x, y):
         tile = self.parent.get(self.x + x, self.y + y)
@@ -39,7 +41,6 @@ class Player(creature.Creature):
 
     def _update_fov(self):
         self.parent.get_fov((self.x // TILE_SIZE, self.y // TILE_SIZE), self.sight_radius)
-
 
     def key_press(self, k):
         speed = self.speed

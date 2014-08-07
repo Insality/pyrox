@@ -16,3 +16,5 @@ class Entity(cocos.sprite.Sprite):
             self.y += anchor[1]
         self.type = None
 
+    def action(self, other):
+        pass
